@@ -1,7 +1,7 @@
 from sqlalchemy import create_engine, MetaData, Table, Column,insert, Integer, VARCHAR, update, delete
 
   
-engine = create_engine("postgresql://postgres:postgres@localhost:5430/address_book_db")
+engine = create_engine("postgresql://postgres:postgres@localhost:5430/address_book")
 
 # initialize the Metadata Object
 meta = MetaData(bind=engine)

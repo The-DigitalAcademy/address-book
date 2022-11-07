@@ -1,4 +1,4 @@
--- Active: 1667747711399@@127.0.0.1@5430@address_book_db
+-- Active: 1667747711399@@127.0.0.1@5430@address_book
 CREATE TABLE details(
     id SERIAL PRIMARY KEY NOT NULL,
     names VARCHAR(50) NOT NULL,
