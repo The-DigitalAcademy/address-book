@@ -1,5 +1,5 @@
 from sqlalchemy import create_engine, MetaData, Table, Column,insert, Integer, VARCHAR, update, delete
-
+import pandas as pd
   
 engine = create_engine("postgresql://postgres:postgres@localhost:5430/address_book")
 
@@ -19,6 +19,10 @@ details = Table(
     extend_existing=True
 )
 
+def show_details():
+    details_df = pd.read_sql_table("details",con=engine,columns=['id','names','email','address','contact'])
+    print(details_df)
+    
 def insert_new():
 
     new_name = input("Enter Your Name and Surname: ")
@@ -60,7 +64,8 @@ options = input(
         "1. Add details\n"
         "2. Modify details\n"
         "3. Delete details\n"
-        "4. Exit\n"
+        "4. Show all Details\n"
+        "5. Exit\n"
     )
 
 while options is not False:
@@ -73,6 +78,9 @@ while options is not False:
         break
     elif options == '3':
         delete_detail()
+        break
+    elif options == '4':
+        show_details()
         break
     else:
         break
