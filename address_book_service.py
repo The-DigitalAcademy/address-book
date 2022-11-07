@@ -21,7 +21,9 @@ details = Table(
 
 def show_details():
     details_df = pd.read_sql_table("details",con=engine,columns=['id','names','email','address','contact'])
-    print(details_df)
+    count = details_df['address'].value_counts()
+    print(details_df,'\n')
+    print("Address search count: ",count)
     
 def insert_new():
 
@@ -64,7 +66,7 @@ options = input(
         "1. Add details\n"
         "2. Modify details\n"
         "3. Delete details\n"
-        "4. Show all Details\n"
+        "4. Show all Details and Address count\n"
         "5. Exit\n"
     )
 
