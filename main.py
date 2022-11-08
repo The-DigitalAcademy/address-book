@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, MetaData, Table, Column,insert, Integer, VARCHAR, update, delete
+from sqlalchemy import create_engine, MetaData, Table, Column,insert, Integer, VARCHAR, update, delete,select, func
 import pandas as pd
 import streamlit as st
   
@@ -20,17 +20,43 @@ details = Table(
     Column('postcode', Integer),
     Column('province', VARCHAR),
     Column('contact', VARCHAR),
+    Column('search_count', Integer),
     extend_existing=True
 )
 
 def search_details():
-    search = input("Address Search: ")
-    details_df = pd.read_sql_table("details",con=engine,columns=['address','postcode','province'])
-    for detail in details_df:
-        count = SELECT COUNT(*) FROM sakila.`actor`;
+    def search():
+        details_df = pd.DataFrame(engine.execute("SELECT * FROM details").fetchall())
+        
+        search = input("Enter Search: ")
+        if search in details_df[3].to_list():
+            count = (update(details).where(details.c.address == search)).values(search_count=details.c.search_count + 1)
+            engine.execute(count)
+        print("Popular is search is:",details_df[3].loc[details_df[7].idxmax()],"searched",details_df[7].loc[details_df[7].idxmax()],"times")
         
     
+    def display():
+        details_df = pd.DataFrame(engine.execute("SELECT * FROM details").fetchall())
+        return(details_df[3].to_list())
     
+    option = input(
+        "What would you like to do\n"
+        "1. Display Infomation in address book\n"
+        "2. Search for Address\n"
+        "3. Exit\n"
+        )
+    
+    while option != '3':
+        
+        if option == '1':
+            display()
+            break
+        elif option == '2':
+            search()
+            break
+        else:
+            break
+        
 def insert_new():
 
     new_name = input("Enter Your Name and Surname: ")
@@ -94,7 +120,7 @@ if __name__=='__main__':
             delete_detail()
             break
         elif options == '4':
-            show_details()
+            search_details()
             break
         else:
             break
