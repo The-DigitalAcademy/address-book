@@ -6,10 +6,11 @@ CREATE TABLE details(
     address VARCHAR(45) NOT NULL,
     postcode INT NOT NULL,
     province VARCHAR NOT NULL,
-    contact VARCHAR(10) NOT NULL
+    contact VARCHAR(10) NOT NULL,
+    search_count INT NOT NULL
 );
 
-INSERT INTO details(names, email, address,postcode,province, contact )
+INSERT INTO details(names, email, address,postcode,province,contact,search_count)
 VALUES
-('John Diale','john@gmail.com','22Top',0152,'Gauteng','0684214968'),
-('Mbedzi Gudani','mbedzigudani@gmail.com', '111 kerk',2001,'Gauteng', '0718345255');
+('John Diale','john@gmail.com','22Top',0152,'Gauteng','0684214968',0),
+('Mbedzi Gudani','mbedzigudani@gmail.com', '111 kerk',2001,'Gauteng', '0718345255',0);
