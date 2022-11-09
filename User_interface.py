@@ -18,14 +18,16 @@ details = Table(
     Column('id', Integer, primary_key=True),
     Column('names', VARCHAR),
     Column('email', VARCHAR),
-    Column('address', VARCHAR),
     Column('contact', VARCHAR),
+    Column('address', VARCHAR),
     Column('postcode', Integer),
     Column('province', VARCHAR),
-    Column('contact', VARCHAR),
     Column('search_count', Integer),
     extend_existing=True
 )
+
+
+
 
 def search_details():
     def search():
@@ -112,7 +114,8 @@ with st.form(key='main menu'):
     options = st.text_input("Enter option: ")
     st.form_submit_button('Go!')
     
-
+st.multiselect('Locations', ['house num','str name','province','city','postcode'])
+st.text_input('Enter Search: ')
 
 while options is not False:
     

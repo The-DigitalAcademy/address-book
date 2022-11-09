@@ -10,6 +10,8 @@ CREATE TABLE details(
     search_count INT NOT NULL
 );
 
+
+
 INSERT INTO details(names, email, address,postcode,province,contact,search_count)
 VALUES
 ('John Diale','john@gmail.com','22Top',0152,'Gauteng','0684214968',0),
