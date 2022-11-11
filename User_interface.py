@@ -19,14 +19,20 @@ details = Table(
     Column('names', VARCHAR),
     Column('email', VARCHAR),
     Column('contact', VARCHAR),
-    Column('address', VARCHAR),
+    extend_existing=True
+)
+
+loations =  Table(
+    'locations' ,meta ,
+    Column('id', Integer, foreign_key=True),
+    Column('street_name', VARCHAR),
+    Column('house_number', VARCHAR),
+    Column('city', VARCHAR),
     Column('postcode', VARCHAR),
     Column('province', VARCHAR),
     Column('search_count', Integer),
     extend_existing=True
 )
-
-
 
 
 def search_details():
@@ -47,8 +53,11 @@ def search_details():
     def display():
         with st.form(key='display'):
             details_df = pd.DataFrame(engine.execute("SELECT * FROM details").fetchall())
-            st.write(details_df)
+            locations_df = pd.DataFrame(engine.execute("SELECT * FROM locations").fetchall())
+            all_df = pd.concat([details_df,locations_df])
+            st.write(all_df)
             st.form_submit_button('Sumbit!')
+                   
     
     with st.form(key='display options'):
         st.write("1. Display details\n")
