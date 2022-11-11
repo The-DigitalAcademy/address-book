@@ -20,7 +20,7 @@ details = Table(
     Column('email', VARCHAR),
     Column('contact', VARCHAR),
     Column('address', VARCHAR),
-    Column('postcode', Integer),
+    Column('postcode', VARCHAR),
     Column('province', VARCHAR),
     Column('search_count', Integer),
     extend_existing=True
@@ -31,27 +31,32 @@ details = Table(
 
 def search_details():
     def search():
-        details_df = pd.DataFrame(engine.execute("SELECT * FROM details").fetchall())
+        with st.form(key='search'):
+            details_df = pd.DataFrame(engine.execute("SELECT * FROM details").fetchall())
+            search = st.text_input("Enter Search: ")
+            if search in details_df[3].to_list():
+                count = (update(details).where(details.c.address == search)).values(search_count=details.c.search_count + 1)
+                engine.execute(count)
+                st.write(details_df[3])
+            st.form_submit_button('Sumbit!')
+        st.write("Popular is search is:")
+        st.write(details_df[3].loc[details_df[7].idxmax()],"searched",details_df[7].loc[details_df[7].idxmax()],"times")
         
-        search = st.text_input("Enter Search: ")
-        if search in details_df[3].to_list():
-            count = (update(details).where(details.c.address == search)).values(search_count=details.c.search_count + 1)
-            engine.execute(count)
-            st.write(details_df[3])
-        st.write("Popular is search is:",details_df[3].loc[details_df[7].idxmax()],"searched",details_df[7].loc[details_df[7].idxmax()],"times")
         
     
     def display():
-        details_df = pd.DataFrame(engine.execute("SELECT * FROM details").fetchall())
-        st.write(details_df)
+        with st.form(key='display'):
+            details_df = pd.DataFrame(engine.execute("SELECT * FROM details").fetchall())
+            st.write(details_df)
+            st.form_submit_button('Sumbit!')
     
-    with st.form(key='dispaly options'):
+    with st.form(key='display options'):
         st.write("1. Display details\n")
         st.write("2. Search Address\n")
         option = st.text_input("Enter Option: ")
-        st.form_submit_button('Go!')
+        st.form_submit_button('Submit!')
     
-    while option != '3':
+    while option is not False:
         
         if option == '1':
             display()
@@ -63,44 +68,47 @@ def search_details():
             break
         
 def insert_new():
-
-    new_name = st.text_input("Enter Your Name and Surname: ")
-    new_email = st.text_input("Enter Your Email: ")
-    new_add = st.text_input("Enter Address: ")
-    phone = st.text_input("Enter Phone Number: ")
-    post_code = st.number_input("Enter Postal code")
-    pro_vinces = st.text_input("Enter Province ")
-
-    inserting = details.insert().values(names=new_name,email=new_email,address=new_add,contact=phone,postcode=post_code,province=pro_vinces,search_count=0)
-    engine.execute(inserting)
-    st.write("Record Added Successfully")
+    with st.form(key='insert'):
+        new_name = st.text_input("Enter Your Name and Surname: ")
+        new_email = st.text_input("Enter Your Email: ")
+        new_add = st.text_input("Enter Address: ")
+        phone = st.text_input("Enter Phone Number: ")
+        post_code = st.text_input("Enter Postal code")
+        pro_vinces = st.text_input("Enter Province ")
+        inserting = details.insert().values(names=new_name,email=new_email,address=new_add,contact=phone,postcode=post_code,province=pro_vinces,search_count=0)
+        engine.execute(inserting)
+        st.form_submit_button('Sumbit!')
+        
 
 def modify():
-
-    name = st.text_input("Enter Name and Surname for Record you want to Modify:")
-    new_name = st.text_input("Enter Your New Name and Surname: ")
-    new_email = st.text_input("Enter Your New Email: ")
-    new_add = st.text_input("Enter Your New Address: ")
-    phone = st.text_input("Enter Your New Phone Number: ")
-    post_code = st.number_input("Enter Postal code")
-    pro_vinces = st.text_input("Enter Province ")
-
-    updated = update(details).where(details.c.names == name).values(names=new_name,email=new_email,address=new_add,contact=phone,postcode=post_code,province=pro_vinces)
-    engine.execute(updated)
-    st.write("Record Updated Successfully")
+    with st.form(key='modify'):
+        name = st.text_input("Enter Name and Surname for Record you want to Modify:")
+        new_name = st.text_input("Enter Your New Name and Surname: ")
+        new_email = st.text_input("Enter Your New Email: ")
+        new_add = st.text_input("Enter Your New Address: ")
+        phone = st.text_input("Enter Your New Phone Number: ")
+        post_code = st.text_input("Enter Postal code")
+        pro_vinces = st.text_input("Enter Province ")
+        updated = update(details).where(details.c.names == name).values(names=new_name,email=new_email,address=new_add,contact=phone,postcode=post_code,province=pro_vinces)
+        engine.execute(updated)
+        st.form_submit_button('Sumbit!')
+    
+        
+        
 
 def delete_detail():
-    
-    name = st.text_input("Enter Name and Surname for Record you want to Delete:")
-    to_delete = delete(details).where(details.c.names == name)
-    engine.execute(to_delete)
-    st.write("Record Deleted Successfully")
+    with st.form(key='delete'):
+        name = st.text_input("Enter Name and Surname for Record you want to Delete:")
+        to_delete = delete(details).where(details.c.names == name)
+        engine.execute(to_delete)
+        st.form_submit_button('Sumbit!')
     
 
 
 
 st.write("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 st.markdown("<h1 style='text-align: center; color: white;'>Address Book Service</h1>", unsafe_allow_html=True)
+st.markdown("<h1 style='text-align: center; color: white;'>📚</h1>", unsafe_allow_html=True)
 st.write("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 st.markdown("<h2 style='text-align: center; color: white;'>Welcome!</h2>", unsafe_allow_html=True)
 st.write("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
@@ -113,9 +121,6 @@ with st.form(key='main menu'):
     st.markdown("<p style='text-align: center; color: white;'>4. Show all Details and Address count\n</p>",unsafe_allow_html=True)
     options = st.text_input("Enter option: ")
     st.form_submit_button('Go!')
-    
-st.multiselect('Locations', ['house num','str name','province','city','postcode'])
-st.text_input('Enter Search: ')
 
 while options is not False:
     
