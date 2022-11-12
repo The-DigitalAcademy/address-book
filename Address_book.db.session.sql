@@ -1,4 +1,4 @@
--- Active: 1667747711399@@127.0.0.1@5430@address_book
+-- Active: 1667640099306@@127.0.0.1@5430@mafia_casino_db@public
 DROP TABLE IF EXISTS details,locations;
 
 CREATE TABLE details(
