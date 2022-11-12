@@ -36,17 +36,20 @@ locations =  Table(
 
 def search_details():
     def search():
-        with st.form(key='search'):
-            details_df = pd.DataFrame(engine.execute("SELECT * FROM details").fetchall())
+        with st.form(key='search street'):
+            columns = ['street_name','house_number','city','postcode','province']
+            column_search = st.multiselect("What do you want to search for",columns)
+            location_df = pd.DataFrame(engine.execute("SELECT * FROM locations").fetchall())
             search = st.text_input("Enter Search: ")
-            if search in details_df[3].to_list():
-                count = (update(details).where(details.c.address == search)).values(search_count=details.c.search_count + 1)
+            if search in location_df[1].to_list():
+                count = (update(locations).where(locations.c.street_name == search)).values(search_count=locations.c.search_count + 1)
                 engine.execute(count)
-                st.write(details_df[3])
-            st.form_submit_button('Sumbit!')
-        st.write("Popular is search is:")
-        st.write(details_df[3].loc[details_df[7].idxmax()],"searched",details_df[7].loc[details_df[7].idxmax()],"times")
-        
+                st.write(location_df[1])
+            submit = st.form_submit_button('Submit!')
+            if submit:
+                st.write("Popular is search is:")
+                st.write(location_df[1].loc[location_df[6].idxmax()],"searched",location_df[6].loc[location_df[6].idxmax()],"times")
+                
         
     
     def display():
@@ -77,22 +80,22 @@ def search_details():
         
 def insert_new():
     with st.form(key='insert'):
-        new_id = st.text_input("Enter Your ID: ")
+        new_id = st.number_input("Enter Your ID: ")
+        new_name = st.text_input("Enter Name:")
         new_email = st.text_input("Enter Your Email: ")
-        new_add = st.text_input("Enter Address: ")
         new_contact = st.text_input("Enter Contact Number:")
-        details_insert = details.insert().values(id=new_id,email=new_email,address=new_add,contact=new_contact,postcode=post_code,province=pro_vinces,search_count=0)
-        engine.execute(details_insert)
-
         new_street_name = st.text_input("Enter Street Name:")
         new_house_number = st.text_input("Enter House Number:")
         new_city = st.text_input("Enter City:")
         post_code = st.text_input("Enter Postal code:")
         pro_vinces = st.text_input("Enter Province:")
-        locations_insert = locations.insert().values(street_name=new_street_name,house_number=new_house_number,city=new_city,search_count=0)
-        engine.execute(locations_insert)
-        st.form_submit_button('Submit!')
-        
+        submit_details = st.form_submit_button('Submit!')
+        if submit_details:
+            details_insert = details.insert().values(id=new_id,names=new_name,email=new_email,contact=new_contact)
+            engine.execute(details_insert)
+            locations_insert = locations.insert().values(id=new_id,street_name=new_street_name,house_number=new_house_number,province=pro_vinces,postcode=post_code,city=new_city,search_count=0)
+            engine.execute(locations_insert)
+            st.write("Record Added Successfully!")
 
 def modify():
     with st.form(key='modify_details'):
@@ -100,30 +103,27 @@ def modify():
         new_name = st.text_input("Enter Your New Name and Surname: ")
         new_email = st.text_input("Enter Your New Email: ")
         phone = st.text_input("Enter Your New Phone Number: ")
-        updated_details = update(details).where(details.c.id == id).values(names=new_name,email=new_email,contact=phone)
-        engine.execute(updated_details)
-        st.form_submit_button('Submit!')
-        
-    with st.form(key='modify_locations'):
         new_street_name = st.text_input("Enter Street Name: ")
         new_house_num = st.text_input("Enter House number: ")
         new_city = st.text_input("Enter City: ")
         post_code = st.text_input("Enter Postal code: ")
         pro_vinces = st.text_input("Enter Province: ")
-        updated_locations = update(locations).where(locations.c.id == id).values(street_name=new_street_name,house_number=new_house_num,city=new_city,postcode=post_code,province=pro_vinces,search_count=0)
-        engine.execute(updated_locations)
-        st.form_submit_button('Submit!')
+        submit = st.form_submit_button('Submit!')
+        if submit:
+            updated_locations = update(locations).where(locations.c.id == id).values(street_name=new_street_name,house_number=new_house_num,city=new_city,postcode=post_code,province=pro_vinces,search_count=0)
+            engine.execute(updated_locations)
+            updated_details = update(details).where(details.c.id == id).values(names=new_name,email=new_email,contact=phone)
+            engine.execute(updated_details)
+            st.write("Record Modified Successfully!")
         
-
 def delete_detail():
     with st.form(key='delete'):
         id = st.text_input("Enter ID for Record you want to Delete:")
-        to_delete = delete(details).where(details.c.id == id)
-        engine.execute(to_delete)
-        st.form_submit_button('Submit!')
-    
-
-
+        sumbit_details = st.form_submit_button('Submit!')
+        if sumbit_details:
+            to_delete = delete(details).where(details.c.id == id)
+            engine.execute(to_delete)
+            st.write("Record Deleted Successfully!")
 
 st.write("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 st.markdown("<h1 style='text-align: center; color: white;'>Address Book Service</h1>", unsafe_allow_html=True)
