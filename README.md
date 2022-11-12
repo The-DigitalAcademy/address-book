@@ -13,6 +13,8 @@ An online address book service where users can view a digital version of a addre
 
 2. PostgresSQL
 
+3. Streamlit (User interface)
+
 ## Features 
 
 1. Query to add their address details together with their names and contact details.
@@ -55,7 +57,7 @@ location
 
 ## Project status 
 
-Not complete
+Completed
 
 ## Acknowledgements 
 
@@ -63,3 +65,4 @@ Not complete
 2. Gudani
 3. Sibongile 
 4. John
+5. Letticia
