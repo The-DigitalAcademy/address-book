@@ -73,7 +73,7 @@ def search_details():
             if submit:
                 st.write("Popular is search is:")
                 st.write(location_df[column_search].loc[location_df["search_count"].idxmax()],"searched",location_df["search_count"].loc[location_df["search_count"].idxmax()],"times")
-                
+                st.balloons()
         
     
     def display():
@@ -81,8 +81,10 @@ def search_details():
             details_df = pd.DataFrame(engine.execute("SELECT * FROM details").fetchall(),columns=['id','names','email','contact'])
             locations_df = pd.DataFrame(engine.execute("SELECT * FROM locations").fetchall(),columns=['id','street_name','house_number','city','postcode','province','search_count'])
             all_df = details_df.merge(locations_df, how = 'inner', on = ['id'])
-            st.write(all_df)
-            st.form_submit_button('Okay!')
+            okay = st.form_submit_button('Show all Records!')
+            if okay:
+                st.write(all_df)
+                st.balloons()
                    
     
     with st.form(key='display options'):
@@ -120,6 +122,7 @@ def insert_new():
             locations_insert = locations.insert().values(id=new_id,street_name=new_street_name,house_number=new_house_number,province=pro_vinces,postcode=post_code,city=new_city,search_count=0)
             engine.execute(locations_insert)
             st.write("Record Added Successfully!")
+            st.balloons()
 
 def modify():
     with st.form(key='modify_details'):
@@ -139,6 +142,7 @@ def modify():
             updated_details = update(details).where(details.c.id == id).values(names=new_name,email=new_email,contact=phone)
             engine.execute(updated_details)
             st.write("Record Modified Successfully!")
+            st.balloons()
         
 def delete_detail():
     with st.form(key='delete'):
@@ -148,6 +152,7 @@ def delete_detail():
             to_delete = delete(details).where(details.c.id == id)
             engine.execute(to_delete)
             st.write("Record Deleted Successfully!")
+            st.balloons()
 
 st.write("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 st.markdown("<h1 style='text-align: center; color: white;'>Address Book Service</h1>", unsafe_allow_html=True)
